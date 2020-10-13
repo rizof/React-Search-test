@@ -4,6 +4,7 @@ import SearchBar from './SearchBar.js'
 import ProductCategoryRow from './ProductCategoryRow.js'
 import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
+import Column2 from './Column2.js'
 
 function FilterableProductTable ({products}) {
     const [filterText, setText] = useState("")
@@ -36,16 +37,29 @@ function FilterableProductTable ({products}) {
     })
 
     return (<>
-        <SearchBar 
-            filterText={filterText} 
-            onFilterTextChange={handleInFilterText}
-            inStockOnly={inStockOnly}
-            onStockChange={handleInStockOnlyChange}
-        />
-        <ProductTable 
-            products={products} 
-            rows={rows}
-        />
+        <header>
+            <Column2 
+                left={
+                    <img className="imgLogo" alt="logo" src="https://fr.freelogodesign.org/Content/img/logo-samples/flooop.png"/>
+                }
+                right={
+                    <div className="contentTopRightHeader">            
+                        <SearchBar 
+                            filterText={filterText} 
+                            onFilterTextChange={handleInFilterText}
+                            inStockOnly={inStockOnly}
+                            onStockChange={handleInStockOnlyChange}
+                        />
+                    </div>
+                }
+            />
+        </header>
+        <div className="contentTableProduct">
+            <ProductTable 
+                products={products} 
+                rows={rows}
+            />
+        </div>
     </>)
 }
 
