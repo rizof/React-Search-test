@@ -6,18 +6,18 @@ import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
 
 function FilterableProductTable ({products}) {
-    const [filterText, ok] = useState("")
-    const [inStockOnly, ok2] = useState(false)
+    const [filterText, setText] = useState("")
+    const [inStockOnly, setStock] = useState(false)
     
     const rows = []
     let lastCategoriy = []
 
     const handleInFilterText = function(e){
-        ok (e.target.value)
+        setText (e.target.value)
     }
 
     const handleInStockOnlyChange = function (e) {
-        ok2 (e.target.checked)
+        setStock (e.target.checked)
     }
 
     products.map((product, index) => {
