@@ -3,7 +3,8 @@ import ProductTable from './ProductTable.js'
 import SearchBar from './SearchBar.js'
 import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
-import Column2 from './Column2.js'
+import InfoUtileSpan from './InfoUtileSpan.js'
+import ContentCart from './ContentCart.js'
 
 function createTableProducts(categoriesAndProduct, categories){
     const table = []
@@ -21,13 +22,7 @@ function createTableProducts(categoriesAndProduct, categories){
      return table
 }
 
-const NoProduct = ()  => (
-    <tr>
-        <td>il n'y a pas de product</td>
-    </tr>
-)
-
-function listProductsAndCategories (products) {
+function listProductsAndCategories (products, handleShoppingCart) {
     const categoriesAndProduct = []
     let lastCategoriy = []
 
@@ -43,7 +38,8 @@ function listProductsAndCategories (products) {
                     key={index} 
                     name={name}
                     price={price}
-                    index={index}
+                    addCart={handleShoppingCart}
+                    product={product}
                 />
             )
         return categoriesAndProduct
@@ -57,15 +53,39 @@ function FilterableProductTable ({productsObject}) {
     const [products, setProducts] = useState(productsObject)
     const [categories, setCategories] = useState([])
     const [cart, setCart] = useState([])
-
+    const [panier, setPanier] = useState(false)
     const table = [] 
     let categoriesAndProduct = []
+
+    const handleShoppingCart = function (product) {
+        let add = true
+        console.log(cart)
+
+        cart.filter((prod) => {
+            if (prod.id === product.id)
+                add = false
+        })
+        if (add == true)
+            setCart ([...cart, product])
+    }
+
+    const handleRemoveCart = function (product) {
+        let dell = [...cart]
+        dell = dell.filter((prod) => prod.id !== product.id)
+        setCart (dell)
+    }
 
     const handleInFilterText = function (e) {
         setText (e.target.value)
     }
+
     const handleInStockOnlyChange = function (e) {
         setStock (e.target.checked)
+    }
+
+    const handlePanier = function () {
+        console.log(panier)
+        setPanier (panier = !panier)
     }
     const handleFilterChange = function (e) {
         const result = productsObject.filter(product => {
@@ -89,29 +109,26 @@ function FilterableProductTable ({productsObject}) {
         })
         setProducts(result)
     }
-    categoriesAndProduct = listProductsAndCategories(products)
+    categoriesAndProduct = listProductsAndCategories(products, handleShoppingCart)
     table.push(createTableProducts(categoriesAndProduct, categories))
     return (
         <>
             <header>
-                <Column2 
-                    left={
-                        <img className="imgLogo" alt="logo" src="https://fr.freelogodesign.org/Content/img/logo-samples/flooop.png"/>
-                    }
-                    right={
                         <div className="contentTopRightHeader">            
                             <SearchBar 
                                 filterText={filterText} 
                                 onFilter={handleFilterChange}
                                 inStockOnly={inStockOnly}
+                                shoppingContentCart={handleShoppingCart}
+                                panier={handlePanier}
                             />
-                        </div>
-                    }
-                />
+                            </div>
             </header>
+            {panier && <ContentCart />}
+            {!panier &&
             <div className="contentTableProduct">
-                {table[0].length === 0 ? <NoProduct /> : table}
-            </div>
+                {table[0].length === 0 ? <InfoUtileSpan info={"Il n'y a pas de produit"}/> : table}
+            </div>}
         </>
     )
 }
