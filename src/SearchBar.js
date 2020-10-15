@@ -1,8 +1,7 @@
 import React from 'react'
-import Cart from './Cart.js'
 
 function SearchBar (props) {
-    const {filterText, onFilter, inStockOnly, shoppingContentCart, panier} = props
+    const {filterText, onFilter, inStockOnly} = props
 
     return (
         <div>
@@ -13,7 +12,6 @@ function SearchBar (props) {
                     <input type="checkbox" id="stock" checked={inStockOnly} onChange={(e) => onFilter(e)}/>
                     <label htmlFor="stock">Produit en stock</label>
                 </div>
-                <Cart shoppingContentCart={shoppingContentCart} panier={panier}/>
         </div>
     )
 }
