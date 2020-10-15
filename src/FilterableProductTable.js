@@ -5,6 +5,7 @@ import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
 import InfoUtileSpan from './InfoUtileSpan.js'
 import ContentCart from './ContentCart.js'
+import Cart from './Cart.js'
 
 function createTableProducts(categoriesAndProduct, categories){
     const table = []
@@ -54,18 +55,20 @@ function FilterableProductTable ({productsObject}) {
     const [categories, setCategories] = useState([])
     const [cart, setCart] = useState([])
     const [panier, setPanier] = useState(false)
+
     const table = [] 
     let categoriesAndProduct = []
 
     const handleShoppingCart = function (product) {
         let add = true
         console.log(cart)
-
+        
         cart.filter((prod) => {
             if (prod.id === product.id)
                 add = false
+            return true
         })
-        if (add == true)
+        if (add === true)
             setCart ([...cart, product])
     }
 
@@ -85,8 +88,10 @@ function FilterableProductTable ({productsObject}) {
 
     const handlePanier = function () {
         console.log(panier)
-        setPanier (panier = !panier)
+        let currentPanier = !panier
+        setPanier (currentPanier)
     }
+
     const handleFilterChange = function (e) {
         const result = productsObject.filter(product => {
             if (e.currentTarget.type === "checkbox")
@@ -111,6 +116,12 @@ function FilterableProductTable ({productsObject}) {
     }
     categoriesAndProduct = listProductsAndCategories(products, handleShoppingCart)
     table.push(createTableProducts(categoriesAndProduct, categories))
+    const listCart = () => {
+        cart.map((prod, index) => 
+            <ContentCart key={index} prod={prod} />
+        )
+    }
+    console.log(listCart)
     return (
         <>
             <header>
@@ -120,11 +131,11 @@ function FilterableProductTable ({productsObject}) {
                                 onFilter={handleFilterChange}
                                 inStockOnly={inStockOnly}
                                 shoppingContentCart={handleShoppingCart}
-                                panier={handlePanier}
                             />
-                            </div>
+                            <Cart panier={handlePanier}/>
+                        </div>
             </header>
-            {panier && <ContentCart />}
+            {panier && listCart}
             {!panier &&
             <div className="contentTableProduct">
                 {table[0].length === 0 ? <InfoUtileSpan info={"Il n'y a pas de produit"}/> : table}
