@@ -12,11 +12,21 @@ function indexProducts(products) {
     products.map((product, index) => {
         if (!lastCategoriy.includes(product.category)){
             lastCategoriy.push(product.category)
-            categoriesAndProduct.push(<ProductCategoryRow key={product.category} category={product.category} />)
+            categoriesAndProduct.push(
+                <ProductCategoryRow 
+                    key={product.category} 
+                    category={product.category} 
+                />
+            )
         }
         const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
         const price = product.price 
-        categoriesAndProduct.push(<ProductRow key={index} name={name} price={price}/>)
+        categoriesAndProduct.push(<ProductRow 
+                key={index} 
+                name={name} 
+                price={price}
+            />
+        )
         return true
     })
     return categoriesAndProduct
@@ -63,7 +73,7 @@ function FilterableProductTable ({productsObject}) {
             return false
         return true
     }
-    
+
     categoriesAndProduct = indexProducts(products)
     
     return (<>
