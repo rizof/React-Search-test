@@ -19,12 +19,12 @@ function indexProducts(products) {
                 />
             )
         }
-        const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
-        const price = product.price 
+        const name = product.stocked ? product.name : <span className='danger'>{product.name}</span> 
         categoriesAndProduct.push(<ProductRow 
                 key={index} 
                 name={name} 
-                price={price}
+                price={product.price}
+                index={index}
             />
         )
         return true
@@ -36,7 +36,7 @@ function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
     const [inStockOnly, setStock] = useState(false)
     const [products, setProducts] = useState(productsObject)
-    
+
     let categoriesAndProduct = []
 
     const handleInFilterText = function (e) {
@@ -61,7 +61,7 @@ function FilterableProductTable ({productsObject}) {
             {
                 handleInFilterText(e)
                 if (product.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === -1)
-                return false
+                    return false
                 if (inStockOnly && !product.stocked)
                     return false
             }
