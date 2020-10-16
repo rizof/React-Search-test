@@ -1,43 +1,49 @@
 import React, { useState } from 'react'
 import ProductTable from './ProductTable.js' 
 import SearchBar from './SearchBar.js'
-import ProductCategoryRow from './ProductCategoryRow.js'
 import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
 
 function indexProducts(products) {
-    let lastCategoriy = []
     const categoriesAndProduct = []
+    let lastCategoriy = []
 
     products.map((product, index) => {
-        if (!lastCategoriy.includes(product.category)){
-            lastCategoriy.push(product.category)
-            categoriesAndProduct.push(
-                <ProductCategoryRow 
-                    key={product.category} 
-                    category={product.category} 
+            if (!lastCategoriy.includes(product.category)){
+                lastCategoriy.push(product.category)
+                categoriesAndProduct[product.category] = []
+            }
+            const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
+            categoriesAndProduct[product.category].push(
+                <ProductRow 
+                    key={index} 
+                    name={name}
+                    price={product.price }
                 />
             )
-        }
-        const name = product.stocked ? product.name : <span className='danger'>{product.name}</span> 
-        categoriesAndProduct.push(<ProductRow 
-                key={index} 
-                name={name} 
-                price={product.price}
-                index={index}
-            />
-        )
-        return true
+        return categoriesAndProduct
     })
     return categoriesAndProduct
+}
+
+function createTableProducts(categoriesAndProduct){
+    const table = []
+    for (const property in categoriesAndProduct) {
+                table.push(
+                    <ProductTable 
+                        category = {property}
+                        key={property}
+                        rows={categoriesAndProduct[property]}
+                    />
+                )
+     }
+     return table
 }
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
     const [inStockOnly, setStock] = useState(false)
     const [products, setProducts] = useState(productsObject)
-
-    let categoriesAndProduct = []
 
     const handleInFilterText = function (e) {
         setText (e.target.value)
@@ -70,8 +76,8 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    categoriesAndProduct = indexProducts(products)
-    
+    const tableProducts = createTableProducts (indexProducts(products))
+
     return (<>
         <SearchBar 
             filterText={filterText} 
@@ -79,10 +85,7 @@ function FilterableProductTable ({productsObject}) {
             inStockOnly={inStockOnly}
             onStockChange={handleFilterChange}
         />
-        <ProductTable 
-            products={products} 
-            rows={categoriesAndProduct}
-        />
+        {tableProducts}
     </>)
 }
 
