@@ -52,26 +52,22 @@ function FilterableProductTable ({productsObject}) {
             if (e.currentTarget.type === "checkbox")
             {
                 handleInStockOnlyChange(e)
-                if (!conditionFilter(e, product, filterText, inStockOnly))
+                if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
+                    return false
+                if (e.target.checked && !product.stocked)
                     return false
             }
             else
             {
                 handleInFilterText(e)
-                if (!conditionFilter(e, product, filterText, inStockOnly))
+                if (product.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === -1)
+                return false
+                if (inStockOnly && !product.stocked)
                     return false
             }
             return product
         })
         setProducts(result)
-    }
-
-    const conditionFilter = function (e, product, filterText, inStockOnly) {
-        if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
-            return false
-        if (e.target.checked && !product.stocked)
-            return false
-        return true
     }
 
     categoriesAndProduct = indexProducts(products)
