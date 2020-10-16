@@ -3,8 +3,10 @@ import ProductTable from './ProductTable.js'
 import SearchBar from './SearchBar.js'
 import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
+import ShowCart from './ShowCart.js'
+import ShoppingCart from './ShoppingCart.js'
 
-function indexProducts(products) {
+function indexProducts(products, handleShoppingCart) {
     const categoriesAndProduct = []
     let lastCategoriy = []
 
@@ -18,7 +20,9 @@ function indexProducts(products) {
                 <ProductRow 
                     key={index} 
                     name={name}
-                    price={product.price }
+                    price={product.price}
+                    addCart={handleShoppingCart}
+                    product={product}
                 />
             )
         return categoriesAndProduct
@@ -44,6 +48,26 @@ function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
     const [inStockOnly, setStock] = useState(false)
     const [products, setProducts] = useState(productsObject)
+    const [cart, setCart] = useState([])
+    const [showPanier, setPanier] = useState(false)
+
+    const handleShoppingCart = function (product, index) {
+        let add = true
+
+        cart.filter((prod) => {
+            if (prod.id === product.id)
+                add = false
+            return true
+        })
+        if (add === true)
+            setCart ([...cart, product])
+    }
+
+    const handleRemoveCart = function (product) {
+        let dell = [...cart]
+        dell = dell.filter((prod) => prod.id !== product.id)
+        setCart (dell)
+    }
 
     const handleInFilterText = function (e) {
         setText (e.target.value)
@@ -51,6 +75,11 @@ function FilterableProductTable ({productsObject}) {
 
     const handleInStockOnlyChange = function (e) {
         setStock (e.target.checked)
+    }
+
+    const handlePanier = function () {
+        let currentPanier = !showPanier
+        setPanier (currentPanier)
     }
 
    const handleFilterChange = function (e) {
@@ -76,7 +105,7 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    const tableProducts = createTableProducts (indexProducts(products))
+    const tableProducts = createTableProducts (indexProducts(products, handleShoppingCart))
 
     return (<>
         <SearchBar 
@@ -85,7 +114,9 @@ function FilterableProductTable ({productsObject}) {
             inStockOnly={inStockOnly}
             onStockChange={handleFilterChange}
         />
-        {tableProducts}
+        <ShowCart cart={cart} handlePanier={handlePanier} showPanier={showPanier} />
+        {!showPanier && <table>{tableProducts}</table>}
+        {showPanier && <ShoppingCart delCart={handleRemoveCart} cart={cart} />}
     </>)
 }
 
