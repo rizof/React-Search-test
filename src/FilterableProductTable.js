@@ -5,14 +5,31 @@ import ProductCategoryRow from './ProductCategoryRow.js'
 import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
 
-function FilterableProductTable ({products}) {
+function indexProducts(products) {
+    let lastCategoriy = []
+    const categoriesAndProduct = []
+
+    products.map((product, index) => {
+        if (!lastCategoriy.includes(product.category)){
+            lastCategoriy.push(product.category)
+            categoriesAndProduct.push(<ProductCategoryRow key={product.category} category={product.category} />)
+        }
+        const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
+        const price = product.price 
+        categoriesAndProduct.push(<ProductRow key={index} name={name} price={price}/>)
+        return true
+    })
+    return categoriesAndProduct
+}
+
+function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
     const [inStockOnly, setStock] = useState(false)
+    const [products, setProducts] = useState(productsObject)
     
-    const rows = []
-    let lastCategoriy = []
+    let categoriesAndProduct = []
 
-    const handleInFilterText = function(e){
+    const handleInFilterText = function (e) {
         setText (e.target.value)
     }
 
@@ -20,35 +37,47 @@ function FilterableProductTable ({products}) {
         setStock (e.target.checked)
     }
 
-    products.map((product, index) => {
-        if (inStockOnly && !product.stocked)
-            return false
+   const handleFilterChange = function (e) {
+        const result = productsObject.filter(product => {
+            if (e.currentTarget.type === "checkbox")
+            {
+                handleInStockOnlyChange(e)
+                if (!conditionFilter(e, product, filterText, inStockOnly))
+                    return false
+            }
+            else
+            {
+                handleInFilterText(e)
+                if (!conditionFilter(e, product, filterText, inStockOnly))
+                    return false
+            }
+            return product
+        })
+        setProducts(result)
+    }
+
+    const conditionFilter = function (e, product, filterText, inStockOnly) {
         if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
             return false
-        if (!lastCategoriy.includes(product.category)){
-            lastCategoriy.push(product.category)
-            rows.push(<ProductCategoryRow key={product.category} category={product.category} />)
-        }
-        const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
-        const price = product.price 
-        rows.push(<ProductRow key={index} name={name} price={price}/>)
+        if (e.target.checked && !product.stocked)
+            return false
         return true
-    })
-
+    }
+    
+    categoriesAndProduct = indexProducts(products)
+    
     return (<>
         <SearchBar 
             filterText={filterText} 
-            onFilterTextChange={handleInFilterText}
+            onFilterTextChange={handleFilterChange}
             inStockOnly={inStockOnly}
-            onStockChange={handleInStockOnlyChange}
+            onStockChange={handleFilterChange}
         />
         <ProductTable 
             products={products} 
-            rows={rows}
+            rows={categoriesAndProduct}
         />
     </>)
 }
-
-
 
 export default FilterableProductTable;
