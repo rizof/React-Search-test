@@ -1,8 +1,8 @@
 import React from 'react'
 
-function ShoppingCart (props) {
+const ShoppingCart = React.memo(function ShoppingCart(props) {
     const {cart, handleRemoveCart} = props
-    console.log(cart)
+
     return (
         <>
             {cart.map((prod, index) => 
@@ -14,12 +14,15 @@ function ShoppingCart (props) {
                         <li> {prod.price}</li>
                     </ul>
                     <ul>
+                        <li> {prod.quantity}</li>
+                    </ul>
+                    <ul>
                         <li><button onClick={() => handleRemoveCart(prod)}>Delete Article</button></li>
                     </ul>
                 </div>
             )}
         </>
     )
-}
+})
 
-export default ShoppingCart;
+export default React.memo(ShoppingCart);

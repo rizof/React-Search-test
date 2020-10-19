@@ -25,7 +25,13 @@ function FilterableProductTable ({productsObject}) {
             return true
         })
         if (add === true)
+        {
+            let newArr = [...products]
+            newArr[product.id].quantity = 1
+            console.log(newArr)
+            setProducts(newArr)
             setCart ([...cart, product])
+        }
     }
 
     const handleRemoveCart = function (product) {
@@ -39,7 +45,7 @@ function FilterableProductTable ({productsObject}) {
         setPanier (currentPanier)
     }
 
-   const handleFilterChange = function (e) {
+   const handleFilterChange = function (e, product) {
         const result = productsObject.filter(product => {
             if (e.currentTarget.type === "checkbox")
             {
@@ -62,6 +68,37 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
+    // const calculator = function (price, quantity) {
+    //     let result = "$"
+    //     console.log(price)
+    //     result += (price * quantity).toString()
+    //     console.log(result)
+    //     return  result
+    // } 
+
+    const updateQuantity = function (operator, prod) {
+        const result = productsObject.filter(product => {
+            if (prod.id === product.id && operator === '-' && prod.quantity > 1){
+                prod.quantity--
+                // prod.price = calculator(parseInt(product.price.substr(1), 10), prod.quantity, '-')
+                return prod
+            }
+            else if (prod.id === product.id && operator === '+') { 
+                prod.quantity++
+                // prod.price = calculator(parseInt(product.price.substr(1), 10), prod.quantity)
+                return prod
+            }
+            else if (prod.id === product.id && Number.isInteger(operator)) {
+                prod.quantity = parseInt(operator, 10)
+                // prod.price = calculator(parseInt(product.price.substr(1), 10), prod.quantity)
+                return prod
+            }
+            else
+                return prod
+        })
+        setProducts(result)
+    }
+
     return (<>
         <SearchBar 
             filterText={filterText} 
@@ -74,16 +111,35 @@ function FilterableProductTable ({productsObject}) {
             showPanier={showPanier} 
         />
         {!showPanier && categories.map((category, index) => 
-            <div key={index}>
-                <p>{category}</p>
+            <table key={index}>
+                <thead>
+                    <tr>
+                        <th>{category}</th>
+                    </tr>
+                </thead>
                     {products.filter(product => product.category === category).map((product, index) => 
-                        <div key={index}>
-                            <p>{product.name}</p> 
-                            <p>{product.price}</p>
-                            <p><button onClick={() => handleShoppingCart(product)}>Add panier</button></p>
-                        </div>
+                        <tbody key={index}>
+                            <tr>
+                                <td>{product.name}</td>
+                                <td>{product.price}</td>
+                                <td>
+                                    <input 
+                                        type="number" 
+                                        min="1" 
+                                        max="100" 
+                                        value={product.quantity} 
+                                        onChange={(e) => updateQuantity(parseInt(e.target.value, 10), product)}
+                                    />
+                                    <div  onClick={(e) => updateQuantity('-', product)}>-</div>
+                                    <div  onClick={(e) => updateQuantity('+', product)}>+</div>
+                                </td>
+                                <td>
+                                    <button onClick={() => handleShoppingCart(product)}>Add panier</button>
+                                </td>
+                            </tr>
+                        </tbody>
                     )}
-            </div>
+            </table>
         )}
         {showPanier && <ShoppingCart cart={cart} handleRemoveCart={handleRemoveCart}/>}
     </>)
