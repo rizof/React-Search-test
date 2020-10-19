@@ -1,65 +1,95 @@
-import React from 'react'
+import React, { useState } from 'react'
 import ProductTable from './ProductTable.js' 
 import SearchBar from './SearchBar.js'
-import ProductCategoryRow from './ProductCategoryRow.js'
 import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
 
-class FilterableProductTable extends React.PureComponent{
-    constructor (props) {
-        super (props)
-        this.state = {
-            filterText: "",
-            inStockOnly: false
-        }
-        this.handleFilterTextChange = this.handleFilterTextChange.bind(this)
-        this.handleInStockOnlyChange= this.handleInStockOnlyChange.bind(this)
-    }
+function FilterableProductTable ({productsObject}) {
+    const [filterText, setText] = useState("")
+    const [inStockOnly, setStock] = useState(false)
+    const [products, setProducts] = useState(productsObject)
     
-    handleFilterTextChange (filterText) {
-        this.setState({filterText})
-    }
+    let tableProducts = []
     
-    handleInStockOnlyChange (inStockOnly) {
-        this.setState({inStockOnly})
+    const handleInFilterText = function (e) {
+        setText (e.target.value)
     }
 
-    render () {
-        const {products} = this.props
-        const rows = []
-        let lastCategoriy = []
-        const {filterText, inStockOnly} = this.state
+    const handleInStockOnlyChange = function (e) {
+        setStock (e.target.checked)
+    }
 
-        products.map((product, index) => {
-            if (inStockOnly && !product.stocked)
-                return false
-            if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
-                return false
-            if (!lastCategoriy.includes(product.category)){
-                lastCategoriy.push(product.category)
-                rows.push(<ProductCategoryRow key={product.category} category={product.category} />)
+   const handleFilterChange = function (e) {
+        const result = productsObject.filter(product => {
+            if (e.currentTarget.type === "checkbox")
+            {
+                handleInStockOnlyChange(e)
+                if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
+                    return false
+                if (e.target.checked && !product.stocked)
+                    return false
             }
-            const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
-            const price = product.price 
-            rows.push(<ProductRow key={index} name={name} price={price}/>)
-            return true
+            else
+            {
+                handleInFilterText(e)
+                if (product.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === -1)
+                    return false
+                if (inStockOnly && !product.stocked)
+                    return false
+            }
+            return product
         })
-
-        return (<>
-            <SearchBar 
-                filterText={filterText} 
-                inStockOnly={inStockOnly}
-                onFilterTextChange={this.handleFilterTextChange}
-                onStockChange={this.handleInStockOnlyChange}
-            />
-            <ProductTable 
-                products={products} 
-                rows={rows}
-            />
-        </>)
+        setProducts(result)
     }
+
+    const indexProducts = function () {
+        const categoriesAndProduct = []
+        let lastCategoriy = []
+    
+        products.map((product, index) => {
+                if (!lastCategoriy.includes(product.category)){
+                    lastCategoriy.push(product.category)
+                    categoriesAndProduct[product.category] = []
+                }
+                const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
+                categoriesAndProduct[product.category].push(
+                    <ProductRow 
+                        key={index} 
+                        name={name}
+                        price={product.price }
+                    />
+                )
+            return categoriesAndProduct
+        })
+        return categoriesAndProduct
+    }
+
+    const createTableProducts = function (categoriesAndProduct) {
+        const table = []
+
+        for (const property in categoriesAndProduct) {
+                    table.push(
+                        <ProductTable 
+                            category = {property}
+                            key={property}
+                            rows={categoriesAndProduct[property]}
+                        />
+                    )
+         }
+         return table
+    }
+
+    tableProducts = createTableProducts(indexProducts())
+
+    return (<>
+        <SearchBar 
+            filterText={filterText} 
+            onFilterTextChange={handleFilterChange}
+            inStockOnly={inStockOnly}
+            onStockChange={handleFilterChange}
+        />
+        {tableProducts}
+    </>)
 }
-
-
 
 export default FilterableProductTable;

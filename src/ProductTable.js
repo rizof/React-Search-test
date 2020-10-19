@@ -1,16 +1,20 @@
 import React from 'react'
 
-const ProductTable = ({products, rows}) => (
-    <table className="table"> 
+const ProductTable = ({rows, category}) => (
+    <>
+    <table>
         <thead>
             <tr>
-                <th>Nom</th>
-                <th>Prix</th>
+                <th>
+                    {category}                
+                </th>
             </tr>
         </thead>
         <tbody>
             {rows}
         </tbody>
     </table>
+    </>
 )
+
 export default ProductTable;
