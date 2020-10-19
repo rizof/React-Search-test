@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import ProductTable from './ProductTable.js' 
 import SearchBar from './SearchBar.js'
-import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
 import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
+import uniq from 'lodash/uniq'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -13,11 +12,7 @@ function FilterableProductTable ({productsObject}) {
     const [cart, setCart] = useState([])
     const [showPanier, setPanier] = useState(false)
 
-    let tableProducts = []
-
-    const handleUpadtecart = function (product) {
-
-    }
+    const categories = uniq(productsObject.map(product => product.category))
 
     const handleShoppingCart = function (product) {
         let add = true
@@ -26,7 +21,6 @@ function FilterableProductTable ({productsObject}) {
             if (prod.id === product.id){
                 add = false
                 prod.quantity += product.quantity
-
             }
             return true
         })
@@ -39,14 +33,6 @@ function FilterableProductTable ({productsObject}) {
         dell = dell.filter((prod) => prod.id !== product.id)
         setCart (dell)
     }
-    
-    const handleInFilterText = function (e) {
-        setText (e.target.value)
-    }
-
-    const handleInStockOnlyChange = function (e) {
-        setStock (e.target.checked)
-    }
 
     const handlePanier = function () {
         let currentPanier = !showPanier
@@ -57,7 +43,7 @@ function FilterableProductTable ({productsObject}) {
         const result = productsObject.filter(product => {
             if (e.currentTarget.type === "checkbox")
             {
-                handleInStockOnlyChange(e)
+                setStock(e.target.checked)
                 if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
                     return false
                 if (e.target.checked && !product.stocked)
@@ -65,7 +51,7 @@ function FilterableProductTable ({productsObject}) {
             }
             else
             {
-                handleInFilterText(e)
+                setText (e.target.value)
                 if (product.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === -1)
                     return false
                 if (inStockOnly && !product.stocked)
@@ -75,46 +61,6 @@ function FilterableProductTable ({productsObject}) {
         })
         setProducts(result)
     }
-
-    const indexProducts = function () {
-        const categoriesAndProduct = []
-        let lastCategoriy = []
-    
-        products.map((product, index) => {
-                if (!lastCategoriy.includes(product.category)){
-                    lastCategoriy.push(product.category)
-                    categoriesAndProduct[product.category] = []
-                }
-                const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
-                categoriesAndProduct[product.category].push(
-                    <ProductRow 
-                        key={index} 
-                        name={name}
-                        handleShoppingCart={handleShoppingCart}
-                        product={product}
-                    />
-                )
-            return categoriesAndProduct
-        })
-        return categoriesAndProduct
-    }
-
-    const createTableProducts = function (categoriesAndProduct) {
-        const table = []
-
-        for (const property in categoriesAndProduct) {
-                    table.push(
-                        <ProductTable 
-                            category = {property}
-                            key={property}
-                            rows={categoriesAndProduct[property]}
-                        />
-                    )
-         }
-         return table
-    }
-
-    tableProducts = createTableProducts(indexProducts())
 
     return (<>
         <SearchBar 
@@ -127,8 +73,19 @@ function FilterableProductTable ({productsObject}) {
             handlePanier={handlePanier} 
             showPanier={showPanier} 
         />
-        {!showPanier && <table>{tableProducts}</table>}
-        {showPanier && <ShoppingCart delCart={handleRemoveCart} cart={cart} />}
+        {!showPanier && categories.map((category, index) => 
+            <div key={index}>
+                <p>{category}</p>
+                    {products.filter(product => product.category === category).map((product, index) => 
+                        <div key={index}>
+                            <p>{product.name}</p> 
+                            <p>{product.price}</p>
+                            <p><button onClick={() => handleShoppingCart(product)}>Add panier</button></p>
+                        </div>
+                    )}
+            </div>
+        )}
+        {showPanier && <ShoppingCart cart={cart} handleRemoveCart={handleRemoveCart}/>}
     </>)
 }
 
