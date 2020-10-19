@@ -1,13 +1,15 @@
 import React from 'react'
 
 const ContentCart = (props) => {
+    const {name, price} = props.prod
+    
     return (
         <>
             <ul>
-                <li> {props.prod.name}</li>
+                <li> {name}</li>
             </ul>
             <ul>
-                <li> {props.prod.price}</li>
+                <li> {price}</li>
             </ul>
             <ul>
                 <li><button onClick={props.delCart}>Delete Article</button></li>
