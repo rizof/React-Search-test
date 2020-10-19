@@ -42,7 +42,7 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    const indexProducts = function (products) {
+    const indexProducts = function () {
         const categoriesAndProduct = []
         let lastCategoriy = []
     
@@ -79,7 +79,7 @@ function FilterableProductTable ({productsObject}) {
          return table
     }
 
-    tableProducts = createTableProducts(indexProducts(products))
+    tableProducts = createTableProducts(indexProducts())
 
     return (<>
         <SearchBar 
