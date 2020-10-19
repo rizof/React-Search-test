@@ -116,7 +116,10 @@ function FilterableProductTable ({productsObject}) {
             inStockOnly={inStockOnly}
             onStockChange={handleFilterChange}
         />
-        <ShowCart cart={cart} handlePanier={handlePanier} showPanier={showPanier} />
+        <ShowCart cart={cart} 
+            handlePanier={handlePanier} 
+            showPanier={showPanier} 
+        />
         {!showPanier && <table>{tableProducts}</table>}
         {showPanier && <ShoppingCart delCart={handleRemoveCart} cart={cart} />}
     </>)

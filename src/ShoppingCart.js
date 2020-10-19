@@ -7,7 +7,9 @@ function ShoppingCart (props) {
     return (
         <>
             {cart.map((prod, index) => 
-                <ContentCart key={index} prod={prod} delCart={() => delCart(prod)}/>
+                <ContentCart key={index} 
+                    prod={prod} 
+                    delCart={() => delCart(prod)}/>
             )}
         </>
     )
