@@ -6,50 +6,14 @@ import './FilterableProductTable.css'
 import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
 
-function indexProducts(products, handleShoppingCart) {
-    const categoriesAndProduct = []
-    let lastCategoriy = []
-
-    products.map((product, index) => {
-            if (!lastCategoriy.includes(product.category)){
-                lastCategoriy.push(product.category)
-                categoriesAndProduct[product.category] = []
-            }
-            const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
-            categoriesAndProduct[product.category].push(
-                <ProductRow 
-                    key={index} 
-                    name={name}
-                    price={product.price}
-                    addCart={handleShoppingCart}
-                    product={product}
-                />
-            )
-        return categoriesAndProduct
-    })
-    return categoriesAndProduct
-}
-
-function createTableProducts(categoriesAndProduct){
-    const table = []
-    for (const property in categoriesAndProduct) {
-                table.push(
-                    <ProductTable 
-                        category = {property}
-                        key={property}
-                        rows={categoriesAndProduct[property]}
-                    />
-                )
-     }
-     return table
-}
-
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
     const [inStockOnly, setStock] = useState(false)
     const [products, setProducts] = useState(productsObject)
     const [cart, setCart] = useState([])
     const [showPanier, setPanier] = useState(false)
+
+    let tableProducts = []
 
     const handleShoppingCart = function (product, index) {
         let add = true
@@ -68,7 +32,7 @@ function FilterableProductTable ({productsObject}) {
         dell = dell.filter((prod) => prod.id !== product.id)
         setCart (dell)
     }
-
+    
     const handleInFilterText = function (e) {
         setText (e.target.value)
     }
@@ -105,7 +69,45 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    const tableProducts = createTableProducts (indexProducts(products, handleShoppingCart))
+    const indexProducts = function () {
+        const categoriesAndProduct = []
+        let lastCategoriy = []
+    
+        products.map((product, index) => {
+                if (!lastCategoriy.includes(product.category)){
+                    lastCategoriy.push(product.category)
+                    categoriesAndProduct[product.category] = []
+                }
+                const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
+                categoriesAndProduct[product.category].push(
+                    <ProductRow 
+                        key={index} 
+                        name={name}
+                        handleShoppingCart={handleShoppingCart}
+                        product={product}
+                    />
+                )
+            return categoriesAndProduct
+        })
+        return categoriesAndProduct
+    }
+
+    const createTableProducts = function (categoriesAndProduct) {
+        const table = []
+
+        for (const property in categoriesAndProduct) {
+                    table.push(
+                        <ProductTable 
+                            category = {property}
+                            key={property}
+                            rows={categoriesAndProduct[property]}
+                        />
+                    )
+         }
+         return table
+    }
+
+    tableProducts = createTableProducts(indexProducts())
 
     return (<>
         <SearchBar 
