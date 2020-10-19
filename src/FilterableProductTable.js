@@ -24,7 +24,7 @@ function FilterableProductTable ({productsObject}) {
             if (e.currentTarget.type === "checkbox")
             {
                 handleInStockOnlyChange(e)
-                if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
+                if (product.name.toLowerCase().find(filterText.toLowerCase()) === -1)
                     return false
                 if (e.target.checked && !product.stocked)
                     return false
