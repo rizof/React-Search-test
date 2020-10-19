@@ -2,7 +2,7 @@ import React from 'react'
 
 const ContentCart = (props) => {
     const {name, price} = props.prod
-    
+
     return (
         <>
             <ul>
