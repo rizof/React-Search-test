@@ -7,7 +7,9 @@ const ProductRow = React.memo(function (props) {
         <tr>
             <td>{name}</td>
             <td>{product.price}</td>
-            <td><button onClick={() => handleShoppingCart(product)}>Add panier</button></td>
+            <td>
+                <button onClick={() => handleShoppingCart(product)}>Add panier</button>
+            </td>
         </tr>
     )
 })
