@@ -15,12 +15,19 @@ function FilterableProductTable ({productsObject}) {
 
     let tableProducts = []
 
-    const handleShoppingCart = function (product, index) {
+    const handleUpadtecart = function (product) {
+
+    }
+
+    const handleShoppingCart = function (product) {
         let add = true
 
         cart.filter((prod) => {
-            if (prod.id === product.id)
+            if (prod.id === product.id){
                 add = false
+                prod.quantity += product.quantity
+
+            }
             return true
         })
         if (add === true)
