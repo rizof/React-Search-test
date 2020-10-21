@@ -4,6 +4,7 @@ import './FilterableProductTable.css'
 import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
+import ProductTable from './ProductTable.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -14,23 +15,15 @@ function FilterableProductTable ({productsObject}) {
 
     const categories = uniq(productsObject.map(product => product.category))
 
-    const handleShoppingCart = function (product) {
-        let add = true
+    const handleShoppingCart = function (e, product) {
+        e.preventDefault();
+        const found = [] 
+        console.log(product)
+        found.push(cart.find(ele => ele.id === product.id))
 
-        cart.filter((prod) => {
-            if (prod.id === product.id){
-                add = false
-                prod.quantity += product.quantity
-            }
-            return true
-        })
-        if (add === true)
-        {
-            let newArr = [...products]
-            newArr[product.id].quantity = 1
-            console.log(newArr)
-            setProducts(newArr)
-            setCart ([...cart, product])
+        if (!found[0]) {
+            cart.push(product)
+            setCart(cart)
         }
     }
 
@@ -47,16 +40,14 @@ function FilterableProductTable ({productsObject}) {
 
    const handleFilterChange = function (e, product) {
         const result = productsObject.filter(product => {
-            if (e.currentTarget.type === "checkbox")
-            {
+            if (e.currentTarget.type === "checkbox") {
                 setStock(e.target.checked)
                 if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
                     return false
                 if (e.target.checked && !product.stocked)
                     return false
             }
-            else
-            {
+            else {
                 setText (e.target.value)
                 if (product.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === -1)
                     return false
@@ -68,33 +59,23 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    // const calculator = function (price, quantity) {
-    //     let result = "$"
-    //     console.log(price)
-    //     result += (price * quantity).toString()
-    //     console.log(result)
-    //     return  result
-    // } 
-
     const updateQuantity = function (operator, prod) {
         const result = productsObject.filter(product => {
             if (prod.id === product.id && operator === '-' && prod.quantity > 1){
                 prod.quantity--
-                // prod.price = calculator(parseInt(product.price.substr(1), 10), prod.quantity, '-')
                 return prod
             }
             else if (prod.id === product.id && operator === '+') { 
                 prod.quantity++
-                // prod.price = calculator(parseInt(product.price.substr(1), 10), prod.quantity)
                 return prod
             }
-            else if (prod.id === product.id && Number.isInteger(operator)) {
+            else if (prod.id === product.id && Number.isInteger(operator)
+                    && operator > 0){
                 prod.quantity = parseInt(operator, 10)
-                // prod.price = calculator(parseInt(product.price.substr(1), 10), prod.quantity)
                 return prod
             }
             else
-                return prod
+                return product
         })
         setProducts(result)
     }
@@ -119,24 +100,24 @@ function FilterableProductTable ({productsObject}) {
                 </thead>
                     {products.filter(product => product.category === category).map((product, index) => 
                         <tbody key={index}>
-                            <tr>
-                                <td>{product.name}</td>
-                                <td>{product.price}</td>
-                                <td>
-                                    <input 
-                                        type="number" 
-                                        min="1" 
-                                        max="100" 
-                                        value={product.quantity} 
-                                        onChange={(e) => updateQuantity(parseInt(e.target.value, 10), product)}
-                                    />
-                                    <div  onClick={(e) => updateQuantity('-', product)}>-</div>
-                                    <div  onClick={(e) => updateQuantity('+', product)}>+</div>
-                                </td>
-                                <td>
-                                    <button onClick={() => handleShoppingCart(product)}>Add panier</button>
-                                </td>
-                            </tr>
+                                <tr>
+                                    <td>{product.name}</td>
+                                    <td>{product.price}</td>
+                                    <td>
+                                        <form onSubmit={(e) => handleShoppingCart(e, product)}>
+                                            <input 
+                                                type="number" 
+                                                min="1" 
+                                                max="100" 
+                                                defaultValue={1}
+                                                onChange={(e) => updateQuantity(parseInt(e.target.value, 10), product)}
+                                            />
+                                            <div  onClick={(e) => updateQuantity('-', product)}>-</div>
+                                            <div  onClick={(e) => updateQuantity('+', product)}>+</div>
+                                            <input type="submit" value="Add panier" />
+                                        </form>
+                                    </td>
+                                </tr>
                         </tbody>
                     )}
             </table>

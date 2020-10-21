@@ -1,7 +1,11 @@
 import React from 'react'
 
+
 const ShoppingCart = React.memo(function ShoppingCart(props) {
-    const {cart, handleRemoveCart} = props
+    const {cart, handleRemoveCart} = props  
+    const total = cart.reduce((total, prod) => {
+        return  total + parseFloat((prod.price.substr(1)) * prod.quantity)
+    }, 0)
 
     return (
         <>
@@ -21,6 +25,9 @@ const ShoppingCart = React.memo(function ShoppingCart(props) {
                     </ul>
                 </div>
             )}
+            <div>
+                total : ${total}
+            </div>
         </>
     )
 })
