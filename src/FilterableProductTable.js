@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState} from 'react'
 import SearchBar from './SearchBar.js'
 import './FilterableProductTable.css'
 import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
-import FormCartShopping from './FormCartShopping.js'
+import ShoppingCountArticles from './ShoppingCountArticles.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -18,35 +18,21 @@ function FilterableProductTable ({productsObject}) {
 
     const handleShoppingCart = function (product) {
         let found = (cart.find(ele => ele.id === product.id))
-        console.log("shopping")
+
         if (!found) {
             found = product
-            found.quantity = (quantity[product.name] > 0) ? quantity[product.name] : 1
-            console.log(found)
             cart.push(found)
             setCart(cart)
-        }else{
-            let update = [...cart]
-            update = update.filter((prod) => {
-                if (prod.id === found.id)
-                    return prod.quantity = found.quantity
-                return prod    
-            })
-            setCart(update)
         }
     }
 
     const handleRemoveCart = function (product) {
-        console.log("remove")
-
         let dell = [...cart]
         dell = dell.filter((prod) => prod.id !== product.id)
         setCart (dell)
     }
 
     const handlePanier = function () {
-        console.log("panier")
-
         let currentPanier = !showPanier
         setPanier (currentPanier)
     }
@@ -73,17 +59,24 @@ function FilterableProductTable ({productsObject}) {
     }
 
     const updateQuantity = function (name, sym) {
-        console.log("update")
-
-        console.log(products)
-        if (sym > 0)
-            quantity[name] = sym
+        if (name in quantity) {
+            if (Number.isInteger(sym) > 0)
+                quantity[name] = sym
+            else if (sym === '-')
+                quantity[name] = (name in quantity && quantity[name] > 1) ? quantity[name] - 1 : 1
+            else if (sym === '+')
+                quantity[name] = (name in quantity && quantity[name] > 1) ? quantity[name] + 1 : 2
+            console.log(quantity, "ezae")
+            console.log(quantity, "ezae")
+        }
+        else{
+            quantity[name] = 2
+        }
         setQuantity(quantity)
     }
-    console.log(quantity)
-    return (<>
-            {console.log("render")}
 
+    return (<>
+        {console.log("render")}
         <SearchBar 
             filterText={filterText} 
             onFilterTextChange={handleFilterChange}
@@ -107,7 +100,7 @@ function FilterableProductTable ({productsObject}) {
                                     <td>{product.name}</td>
                                     <td>{product.price}</td>
                                     <td>
-                                        <FormCartShopping 
+                                        <ShoppingCountArticles 
                                             product={product} 
                                             quantity={quantity} 
                                             updateQuantity={updateQuantity} 
