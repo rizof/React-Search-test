@@ -4,7 +4,7 @@ import './FilterableProductTable.css'
 import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
-import ProductTable from './ProductTable.js'
+import FormCartShopping from './FormCartShopping.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -12,28 +12,41 @@ function FilterableProductTable ({productsObject}) {
     const [products, setProducts] = useState(productsObject)
     const [cart, setCart] = useState([])
     const [showPanier, setPanier] = useState(false)
+    const [quantity, setQuantity] = useState([])
 
     const categories = uniq(productsObject.map(product => product.category))
 
-    const handleShoppingCart = function (e, product) {
-        e.preventDefault();
-        const found = [] 
-        console.log(product)
-        found.push(cart.find(ele => ele.id === product.id))
-
-        if (!found[0]) {
-            cart.push(product)
+    const handleShoppingCart = function (product) {
+        let found = (cart.find(ele => ele.id === product.id))
+        console.log("shopping")
+        if (!found) {
+            found = product
+            found.quantity = (quantity[product.name] > 0) ? quantity[product.name] : 1
+            console.log(found)
+            cart.push(found)
             setCart(cart)
+        }else{
+            let update = [...cart]
+            update = update.filter((prod) => {
+                if (prod.id === found.id)
+                    return prod.quantity = found.quantity
+                return prod    
+            })
+            setCart(update)
         }
     }
 
     const handleRemoveCart = function (product) {
+        console.log("remove")
+
         let dell = [...cart]
         dell = dell.filter((prod) => prod.id !== product.id)
         setCart (dell)
     }
 
     const handlePanier = function () {
+        console.log("panier")
+
         let currentPanier = !showPanier
         setPanier (currentPanier)
     }
@@ -59,28 +72,18 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    const updateQuantity = function (operator, prod) {
-        const result = productsObject.filter(product => {
-            if (prod.id === product.id && operator === '-' && prod.quantity > 1){
-                prod.quantity--
-                return prod
-            }
-            else if (prod.id === product.id && operator === '+') { 
-                prod.quantity++
-                return prod
-            }
-            else if (prod.id === product.id && Number.isInteger(operator)
-                    && operator > 0){
-                prod.quantity = parseInt(operator, 10)
-                return prod
-            }
-            else
-                return product
-        })
-        setProducts(result)
-    }
+    const updateQuantity = function (name, sym) {
+        console.log("update")
 
+        console.log(products)
+        if (sym > 0)
+            quantity[name] = sym
+        setQuantity(quantity)
+    }
+    console.log(quantity)
     return (<>
+            {console.log("render")}
+
         <SearchBar 
             filterText={filterText} 
             onFilterTextChange={handleFilterChange}
@@ -104,25 +107,25 @@ function FilterableProductTable ({productsObject}) {
                                     <td>{product.name}</td>
                                     <td>{product.price}</td>
                                     <td>
-                                        <form onSubmit={(e) => handleShoppingCart(e, product)}>
-                                            <input 
-                                                type="number" 
-                                                min="1" 
-                                                max="100" 
-                                                defaultValue={1}
-                                                onChange={(e) => updateQuantity(parseInt(e.target.value, 10), product)}
-                                            />
-                                            <div  onClick={(e) => updateQuantity('-', product)}>-</div>
-                                            <div  onClick={(e) => updateQuantity('+', product)}>+</div>
-                                            <input type="submit" value="Add panier" />
-                                        </form>
+                                        <FormCartShopping 
+                                            product={product} 
+                                            quantity={quantity} 
+                                            updateQuantity={updateQuantity} 
+                                            handleShoppingCart={handleShoppingCart}
+                                            delOrAdd={true}
+                                        />
                                     </td>
                                 </tr>
                         </tbody>
                     )}
             </table>
         )}
-        {showPanier && <ShoppingCart cart={cart} handleRemoveCart={handleRemoveCart}/>}
+        {showPanier && <ShoppingCart 
+                            cart={cart} 
+                            handleRemoveCart={handleRemoveCart}
+                            updateQuantity={updateQuantity}
+                            quantity={quantity}
+                        />}
     </>)
 }
 
