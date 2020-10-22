@@ -4,7 +4,7 @@ import './FilterableProductTable.css'
 import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
-import ShoppingCountArticles from './ShoppingCountArticles.js'
+// import ShoppingCountArticles from './ShoppingCountArticles.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -12,7 +12,6 @@ function FilterableProductTable ({productsObject}) {
     const [products, setProducts] = useState(productsObject)
     const [cart, setCart] = useState([])
     const [showPanier, setPanier] = useState(false)
-    const [quantity, setQuantity] = useState([])
 
     const categories = uniq(productsObject.map(product => product.category))
 
@@ -58,25 +57,11 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    const updateQuantity = function (name, sym) {
-        if (name in quantity) {
-            if (Number.isInteger(sym) > 0)
-                quantity[name] = sym
-            else if (sym === '-')
-                quantity[name] = (name in quantity && quantity[name] > 1) ? quantity[name] - 1 : 1
-            else if (sym === '+')
-                quantity[name] = (name in quantity && quantity[name] > 1) ? quantity[name] + 1 : 2
-            console.log(quantity, "ezae")
-            console.log(quantity, "ezae")
-        }
-        else{
-            quantity[name] = 2
-        }
-        setQuantity(quantity)
-    }
+    // const updateQuantity = function (name, sym) {
+
+    // }
 
     return (<>
-        {console.log("render")}
         <SearchBar 
             filterText={filterText} 
             onFilterTextChange={handleFilterChange}
@@ -100,13 +85,7 @@ function FilterableProductTable ({productsObject}) {
                                     <td>{product.name}</td>
                                     <td>{product.price}</td>
                                     <td>
-                                        <ShoppingCountArticles 
-                                            product={product} 
-                                            quantity={quantity} 
-                                            updateQuantity={updateQuantity} 
-                                            handleShoppingCart={handleShoppingCart}
-                                            delOrAdd={true}
-                                        />
+                                        <button onClick={() => handleShoppingCart(product)}>add panier</button>
                                     </td>
                                 </tr>
                         </tbody>
@@ -116,8 +95,6 @@ function FilterableProductTable ({productsObject}) {
         {showPanier && <ShoppingCart 
                             cart={cart} 
                             handleRemoveCart={handleRemoveCart}
-                            updateQuantity={updateQuantity}
-                            quantity={quantity}
                         />}
     </>)
 }
