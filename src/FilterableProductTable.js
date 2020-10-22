@@ -1,7 +1,6 @@
 import React, { useState} from 'react'
 import SearchBar from './SearchBar.js'
 import './FilterableProductTable.css'
-import ShowCart from './ShowCart.js'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
 import ShoppingCountArticles from './ShoppingCountArticles.js'
@@ -11,7 +10,6 @@ function FilterableProductTable ({productsObject}) {
     const [inStockOnly, setStock] = useState(false)
     const [products, setProducts] = useState(productsObject)
     const [cart, setCart] = useState([])
-    const [showPanier, setPanier] = useState(false)
     const [quantity, setQuantity] = useState([])
 
     const categories = uniq(productsObject.map(product => product.category))
@@ -70,12 +68,6 @@ function FilterableProductTable ({productsObject}) {
         setCart (dell)
     }
 
-    // ShowPanier
-    const handlePanier = function () {
-        let currentPanier = !showPanier
-        setPanier (currentPanier)
-    }
-
     // recherche and stock
    const handleFilterChange = function (e, product) {
         const result = productsObject.filter(product => {
@@ -122,10 +114,6 @@ function FilterableProductTable ({productsObject}) {
                 onFilterTextChange={handleFilterChange}
                 inStockOnly={inStockOnly}
                 onStockChange={handleFilterChange}
-            />
-            <ShowCart cart={cart}
-                handlePanier={handlePanier}
-                showPanier={showPanier}
             />
         </header>
         <div className='content'>
