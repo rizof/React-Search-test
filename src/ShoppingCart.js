@@ -1,36 +1,44 @@
-import React from 'react'
-
-
+import React  from 'react'
+import ShoppingCountArticles from './ShoppingCountArticles.js'
 const ShoppingCart = React.memo(function ShoppingCart(props) {
-    const {cart, handleRemoveCart} = props
-    
+    const {cart, handleRemoveCart, updateQuantityCart} = props
+
     const total = cart.reduce((total, prod) => {
-        return  total += (parseFloat((prod.price.substr(1)) * prod.quantity))
+        console.log(prod.quantity,(prod.price.substr(1)) )
+        return  total += parseFloat((prod.price.substr(1)) * prod.quantity)
     }, 0)
 
     return (
         <>
-            {cart.map((prod, index) => 
+            {cart.map((prod, index) =>
                 <div key={index}>
                     <ul key={index}>
                         <li> {prod.name}</li>
                     </ul>
                     <ul>
-                        <li> {prod.price}</li>
+                        <li> {prod.realPrice}</li>
                     </ul>
                     <ul>
-                        <li>{prod.quantity}</li>
+                        <li>
+                            Qt : {prod.quantity}
+                        </li>
                     </ul>
                     <ul>
-                        <li><button onClick={() => handleRemoveCart(prod)}>Delete Article</button></li>
+                        <li>
+                            <ShoppingCountArticles
+                                product={prod}
+                                updateQuantity={updateQuantityCart}
+                                handleShoppingCart={handleRemoveCart}
+                                delOrAdd={false}
+                            />
+                        </li>
                     </ul>
                 </div>
             )}
-            <div>
+            <div id='total'>
                 total : ${total}
             </div>
         </>
     )
 })
-
-export default React.memo(ShoppingCart);
+export default React.memo(ShoppingCart)
