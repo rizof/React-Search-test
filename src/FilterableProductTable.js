@@ -28,7 +28,7 @@ function FilterableProductTable ({productsObject}) {
             newArr = newArr.map((e) => {
                 if (e.id === found.id)
                     e.quantity++
-                return newArr
+                return e
             })
             setCart(newArr)
         }
