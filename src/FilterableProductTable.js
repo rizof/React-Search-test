@@ -1,37 +1,93 @@
-import React, { useState } from 'react'
-import ProductTable from './ProductTable.js' 
+import React, { useState} from 'react'
 import SearchBar from './SearchBar.js'
-import ProductRow from './ProductRow.js'
 import './FilterableProductTable.css'
+import ShowCart from './ShowCart.js'
+import ShoppingCart from './ShoppingCart.js'
+import uniq from 'lodash/uniq'
+import ShoppingCountArticles from './ShoppingCountArticles.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
     const [inStockOnly, setStock] = useState(false)
     const [products, setProducts] = useState(productsObject)
-    
-    let tableProducts = []
-    
-    const handleInFilterText = function (e) {
-        setText (e.target.value)
+    const [cart, setCart] = useState([])
+    const [showPanier, setPanier] = useState(false)
+    const [quantity, setQuantity] = useState([])
+
+    const categories = uniq(productsObject.map(product => product.category))
+                    
+    // HANDLE CART
+
+    const handleShoppingCart = function (product) {
+        let found = (cart.find(ele => ele.id === product.id))
+
+        if (!found) {
+            found = product
+            found.quantity = quantity[found.name] ? quantity[found.name] : 1
+            found.realPrice = calculator(found)
+            cart.push(found)
+            setCart([...cart])
+        }else{
+            let newArr = [...cart]
+            newArr = newArr.map((e) => {
+                if (e.id === found.id) {
+                    e.quantity += quantity[e.name] ?  quantity[e.name] : 1
+                    found.realPrice = calculator(found)
+                }
+                return e
+            })
+            setCart(newArr)
+        }
+        quantity[product.name] = 1
+        setQuantity(quantity)
     }
 
-    const handleInStockOnlyChange = function (e) {
-        setStock (e.target.checked)
+    const calculator = function (prod) {
+        return prod.realPrice = parseFloat((prod.price.substr(1))) * prod.quantity
     }
 
-   const handleFilterChange = function (e) {
+    const updateQuantityCart = function (prod, sym) {
+        let found = (cart.find(ele => ele.id === prod.id))
+
+        let newArr = [...cart]
+            newArr = newArr.map((e) => {
+                if (e.id === found.id && sym === '+'){
+                    e.quantity++ 
+                    e.realPrice = calculator(e)
+                }
+                else if (e.id === found.id && sym === '-' && e.quantity > 1){
+                    e.quantity-- 
+                    e.realPrice = calculator(e)
+                }
+                return e
+            })
+            setCart(newArr)
+    }
+
+    const handleRemoveCart = function (product) {
+        let dell = [...cart]
+        dell = dell.filter((prod) => prod.id !== product.id)
+        setCart (dell)
+    }
+
+    // ShowPanier
+    const handlePanier = function () {
+        let currentPanier = !showPanier
+        setPanier (currentPanier)
+    }
+
+    // recherche and stock
+   const handleFilterChange = function (e, product) {
         const result = productsObject.filter(product => {
-            if (e.currentTarget.type === "checkbox")
-            {
-                handleInStockOnlyChange(e)
+            if (e.currentTarget.type === "checkbox") {
+                setStock(e.target.checked)
                 if (product.name.toLowerCase().indexOf(filterText.toLowerCase()) === -1)
                     return false
                 if (e.target.checked && !product.stocked)
                     return false
             }
-            else
-            {
-                handleInFilterText(e)
+            else {
+                setText (e.target.value)
                 if (product.name.toLowerCase().indexOf(e.target.value.toLowerCase()) === -1)
                     return false
                 if (inStockOnly && !product.stocked)
@@ -42,53 +98,73 @@ function FilterableProductTable ({productsObject}) {
         setProducts(result)
     }
 
-    const indexProducts = function () {
-        const categoriesAndProduct = []
-        let lastCategoriy = []
+    //quantity product for add to cart
+    const updateQuantity = function (product, sym) {
+        let cpyQuantity = []
+        let name = product.name
     
-        products.map((product, index) => {
-                if (!lastCategoriy.includes(product.category)){
-                    lastCategoriy.push(product.category)
-                    categoriesAndProduct[product.category] = []
-                }
-                const name = product.stocked ? product.name : <span className='danger'>{product.name}</span>
-                categoriesAndProduct[product.category].push(
-                    <ProductRow 
-                        key={index} 
-                        name={name}
-                        price={product.price }
-                    />
-                )
-            return categoriesAndProduct
-        })
-        return categoriesAndProduct
+        if (Number.isInteger(sym) > 0)
+            cpyQuantity[name] = sym
+        else if (sym === '-')
+            cpyQuantity[name] = (name in quantity && quantity[name] > 1) ? quantity[name] - 1 : 1
+        else if (sym === '+')
+            cpyQuantity[name] = (name in quantity && quantity[name] > 1) ? quantity[name] + 1 : 2
+        else
+        cpyQuantity[name] = 2
+        setQuantity(cpyQuantity)
     }
-
-    const createTableProducts = function (categoriesAndProduct) {
-        const table = []
-
-        for (const property in categoriesAndProduct) {
-                    table.push(
-                        <ProductTable 
-                            category = {property}
-                            key={property}
-                            rows={categoriesAndProduct[property]}
-                        />
-                    )
-         }
-         return table
-    }
-
-    tableProducts = createTableProducts(indexProducts())
 
     return (<>
-        <SearchBar 
-            filterText={filterText} 
-            onFilterTextChange={handleFilterChange}
-            inStockOnly={inStockOnly}
-            onStockChange={handleFilterChange}
-        />
-        {tableProducts}
+        {console.log("render")}
+        <header>
+            <SearchBar
+                filterText={filterText}
+                onFilterTextChange={handleFilterChange}
+                inStockOnly={inStockOnly}
+                onStockChange={handleFilterChange}
+            />
+            <ShowCart cart={cart}
+                handlePanier={handlePanier}
+                showPanier={showPanier}
+            />
+        </header>
+        <div className='content'>
+            {categories.map((category, index) =>
+                <table key={index}>
+                    <thead>
+                        <tr>
+                            <th>{category}</th>
+                        </tr>
+                    </thead>
+                        {products.filter(product => product.category === category).map((product, index) =>
+                            <tbody key={index}>
+                                    <tr>
+                                        <td>{product.name}</td>
+                                        <td>{product.price}</td>
+                                        <td>
+                                            Qt : {!quantity[product.name] ? 1 : quantity[product.name]}
+                                        </td>
+                                        <td>
+                                            <ShoppingCountArticles
+                                                product={product}
+                                                updateQuantity={updateQuantity}
+                                                handleShoppingCart={handleShoppingCart}
+                                                delOrAdd={true}
+                                            />
+                                        </td>
+                                    </tr>
+                            </tbody>
+                        )}
+                </table>
+            )}
+            <ShoppingCart
+                cart={cart}
+                handleRemoveCart={handleRemoveCart}
+                updateQuantity={updateQuantity}
+                quantity={quantity}
+                updateQuantityCart={updateQuantityCart}
+            />
+        </div>
     </>)
 }
 
