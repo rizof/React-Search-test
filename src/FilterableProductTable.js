@@ -4,6 +4,8 @@ import './FilterableProductTable.css'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
 import ShoppingCountArticles from './ShoppingCountArticles.js'
+import Modal from './Modal.js'
+import useModal from './useModal.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -11,6 +13,7 @@ function FilterableProductTable ({productsObject}) {
     const [products, setProducts] = useState(productsObject)
     const [cart, setCart] = useState([])
     const [quantity, setQuantity] = useState([])
+    const {isShow, toggle} = useModal()
 
     const categories = uniq(productsObject.map(product => product.category))
                     
@@ -127,9 +130,9 @@ function FilterableProductTable ({productsObject}) {
                             </tr>
                         </thead>
                             {products.filter(product => product.category === category).map((product, index) =>
-                                <tbody key={index}>
+                                <tbody className="flexContentTable" key={index}>
                                         <tr>
-                                            <td>{product.name}</td>
+                                            <td onClick={toggle}><a href={"#" + product.name}>{product.name}</a></td>
                                             <td>{product.price}</td>
                                             <td>
                                                 Qt : {!quantity[product.name] ? 1 : quantity[product.name]}
@@ -141,6 +144,14 @@ function FilterableProductTable ({productsObject}) {
                                                     handleShoppingCart={handleShoppingCart}
                                                     delOrAdd={true}
                                                 />
+                                            </td>
+                                            <td>{isShow && <Modal 
+                                                product={product}
+                                                prodQuantity={!quantity[product.name] ? 1 : quantity[product.name]}
+                                                updateQuantity={updateQuantity}
+                                                handleShoppingCart={handleShoppingCart}
+                                                delOrAdd={true}
+                                                hide={toggle}/>}
                                             </td>
                                         </tr>
                                 </tbody>
