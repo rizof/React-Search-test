@@ -1,6 +1,6 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faShoppingCart, faPlus, faMinusCircle, faPlusCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons'
+import { faShoppingCart, faMinusCircle, faPlusCircle, faTrashAlt} from '@fortawesome/free-solid-svg-icons'
 
 const FormCartShopping= (props) => {
     const {product, updateQuantity, handleShoppingCart, delOrAdd} = props
