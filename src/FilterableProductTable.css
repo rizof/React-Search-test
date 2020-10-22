@@ -1,3 +1,45 @@
 .danger{
     color: red
 }
+.contentBoard{
+    display: flex;
+    justify-content: space-around;
+}
+header{
+    background-color:#e67e22;
+    height: 130px;
+    display: flex;
+    align-items: center;
+}
+.imgLogo{
+    width: 100px;
+}
+table{
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+.contentTable{
+    display:flex;
+    justify-content: space-around;
+    margin:7% 0 6% 0;
+    flex-wrap: wrap;
+}
+.tableCategorie{
+    background: #fff;
+    padding: 10px;
+    margin: 10px;
+    width: 400px;
+}
+.flexContentTable{
+    display: flex;
+    justify-content: space-around;
+}
+.quantityFlex{
+    display: flex;
+    padding: 10px;
+}
+.quantityFlex :first-child{
+    margin-right: 2px;
+}
+.quantityFlex button{
+    margin-left: 10px;
+}

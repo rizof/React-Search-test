@@ -1,5 +1,7 @@
 import React  from 'react'
 import ShoppingCountArticles from './ShoppingCountArticles.js'
+import './ShoppingCart.css'
+
 const ShoppingCart = React.memo(function ShoppingCart(props) {
     const {cart, handleRemoveCart, updateQuantityCart} = props
 
@@ -9,7 +11,7 @@ const ShoppingCart = React.memo(function ShoppingCart(props) {
     }, 0)
 
     return (
-        <>
+        <div className="ShoppingCart">
             {cart.map((prod, index) =>
                 <div key={index}>
                     <ul key={index}>
@@ -33,12 +35,13 @@ const ShoppingCart = React.memo(function ShoppingCart(props) {
                             />
                         </li>
                     </ul>
+                    <div className="line"></div>
                 </div>
             )}
             <div id='total'>
-                total : ${total}
+                total : ${total.toFixed(2)}
             </div>
-        </>
+        </div>
     )
 })
 export default React.memo(ShoppingCart)

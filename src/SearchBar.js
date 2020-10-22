@@ -1,15 +1,15 @@
 import React from 'react'
-
+import './SearchBar.css'
 
 function SearchBar (props) {
     const {filterText, onFilterTextChange, onStockChange, inStockOnly} = props
 
     return (
-        <div>
+        <div className="flexRecherche">
             <div>
                 <input type="text" 
                     value={filterText} 
-                    placeholder="Rechercher" 
+                    placeholder="Rechercher"
                     onChange={(e) => onFilterTextChange(e)}
                 />
             </div>
