@@ -5,7 +5,7 @@ const ShoppingCart = React.memo(function ShoppingCart(props) {
     const {cart, handleRemoveCart} = props
     
     const total = cart.reduce((total, prod) => {
-        return  total + parseFloat((prod.price.substr(1)))
+        return  total += (parseFloat((prod.price.substr(1)) * prod.quantity))
     }, 0)
 
     return (
@@ -17,6 +17,9 @@ const ShoppingCart = React.memo(function ShoppingCart(props) {
                     </ul>
                     <ul>
                         <li> {prod.price}</li>
+                    </ul>
+                    <ul>
+                        <li>{prod.quantity}</li>
                     </ul>
                     <ul>
                         <li><button onClick={() => handleRemoveCart(prod)}>Delete Article</button></li>

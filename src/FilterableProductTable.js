@@ -1,9 +1,9 @@
-import React, { useState} from 'react'
-import SearchBar from './SearchBar.js'
-import './FilterableProductTable.css'
-import ShowCart from './ShowCart.js'
-import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
+import React, { useState } from 'react'
+import './FilterableProductTable.css'
+import SearchBar from './SearchBar.js'
+import ShoppingCart from './ShoppingCart.js'
+import ShowCart from './ShowCart.js'
 // import ShoppingCountArticles from './ShoppingCountArticles.js'
 
 function FilterableProductTable ({productsObject}) {
@@ -19,12 +19,19 @@ function FilterableProductTable ({productsObject}) {
         let found = (cart.find(ele => ele.id === product.id))
 
         if (!found) {
-            cart.push(product)
-            found = [...cart]
-            setCart(found)
+            found = product
+            found.quantity = 1
+            cart.push(found)
+            setCart([...cart])
+        }else{
+            let newArr = [...cart]
+            newArr.map((e) => {
+                if (e.id === found.id)
+                    e.quantity++
+            })
+            setCart(newArr)
         }
     }
-
     const handleRemoveCart = function (product) {
         let dell = [...cart]
         dell = dell.filter((prod) => prod.id !== product.id)
