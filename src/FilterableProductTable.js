@@ -19,9 +19,9 @@ function FilterableProductTable ({productsObject}) {
         let found = (cart.find(ele => ele.id === product.id))
 
         if (!found) {
-            found = product
-            cart.push(found)
-            setCart(cart)
+            cart.push(product)
+            found = [...cart]
+            setCart(found)
         }
     }
 
@@ -72,7 +72,7 @@ function FilterableProductTable ({productsObject}) {
             handlePanier={handlePanier} 
             showPanier={showPanier} 
         />
-        {!showPanier && categories.map((category, index) => 
+        {categories.map((category, index) => 
             <table key={index}>
                 <thead>
                     <tr>
@@ -92,10 +92,10 @@ function FilterableProductTable ({productsObject}) {
                     )}
             </table>
         )}
-        {showPanier && <ShoppingCart 
-                            cart={cart} 
-                            handleRemoveCart={handleRemoveCart}
-                        />}
+        <ShoppingCart 
+            cart={cart} 
+            handleRemoveCart={handleRemoveCart}
+        />
     </>)
 }
 
