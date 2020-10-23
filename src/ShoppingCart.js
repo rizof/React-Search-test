@@ -12,6 +12,7 @@ const ShoppingCart = React.memo(function ShoppingCart(props) {
 
     return (
         <div className="ShoppingCart">
+            <h1>Panier</h1>
             {cart.map((prod, index) =>
                 <div key={index}>
                     <ul key={index}>

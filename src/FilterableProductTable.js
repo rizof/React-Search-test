@@ -12,7 +12,7 @@ function FilterableProductTable ({productsObject}) {
     const [cart, setCart] = useState([])
     const [quantity, setQuantity] = useState([])
 
-    const categories = uniq(productsObject.map(product => product.category))
+    const categories = uniq(products.map(product => product.category))
                     
     // HANDLE CART
 
@@ -119,7 +119,8 @@ function FilterableProductTable ({productsObject}) {
         </header>
         <div className='contentBoard'>
             <div className='contentTable'>
-                {categories.map((category, index) =>
+                {console.log(products.length)}
+                {products.length > 0  && categories.map((category, index) =>
                     <table className='tableCategorie' key={index}>
                         <thead>
                             <tr>
@@ -147,15 +148,17 @@ function FilterableProductTable ({productsObject}) {
                             )}
                     </table>
                 )}
+                {products.length <= 0 && 'pas de products...'}
             </div>
-            <aside>
+            <aside className='panierAside'>
+                {(cart.length > 0) &&
                 <ShoppingCart
                     cart={cart}
                     handleRemoveCart={handleRemoveCart}
                     updateQuantity={updateQuantity}
                     quantity={quantity}
                     updateQuantityCart={updateQuantityCart}
-                />
+                />}
             </aside>
         </div>
     </>)

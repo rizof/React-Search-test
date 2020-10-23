@@ -20,26 +20,40 @@ table{
 .contentTable{
     display:flex;
     justify-content: space-around;
-    margin:7% 0 6% 0;
+    margin: 7% 4% 6% 4%;
     flex-wrap: wrap;
+    flex-direction: column;
+    width: 75%;
 }
+
 .tableCategorie{
     background: #fff;
     padding: 10px;
     margin: 10px;
-    width: 400px;
 }
+
 .flexContentTable{
     display: flex;
     justify-content: space-around;
 }
+
 .quantityFlex{
     display: flex;
     padding: 10px;
 }
+
 .quantityFlex :first-child{
     margin-right: 2px;
 }
+
 .quantityFlex button{
     margin-left: 10px;
+}
+
+.tableCategorie thead tr th{
+    text-align: center;
+}
+.panierAside{
+    width: 25%;
+    margin: 7% 0 0 0;
 }
