@@ -4,6 +4,7 @@ import './FilterableProductTable.css'
 import ShoppingCart from './ShoppingCart.js'
 import uniq from 'lodash/uniq'
 import ShoppingCountArticles from './ShoppingCountArticles.js'
+import InfoAlert from './InfoAlert.js'
 
 function FilterableProductTable ({productsObject}) {
     const [filterText, setText] = useState("")
@@ -106,8 +107,11 @@ function FilterableProductTable ({productsObject}) {
         setQuantity(cpyQuantity)
     }
 
+    const stocked = function (stock) {
+        return stock ? "" : "stocked" 
+    }
+
     return (<>
-        {console.log("render")}
         <header>
             <img className="imgLogo"src="https://stock.flashmode.tn/wp-content/uploads/2020/06/dj-music-logo-png-810.png" alt='logo'/>
             <SearchBar
@@ -119,8 +123,7 @@ function FilterableProductTable ({productsObject}) {
         </header>
         <div className='contentBoard'>
             <div className='contentTable'>
-                {console.log(products.length)}
-                {products.length > 0  && categories.map((category, index) =>
+                {(products.length > 0  && categories.map((category, index) =>
                     <table className='tableCategorie' key={index}>
                         <thead>
                             <tr>
@@ -130,10 +133,10 @@ function FilterableProductTable ({productsObject}) {
                             {products.filter(product => product.category === category).map((product, index) =>
                                 <tbody key={index}>
                                         <tr>
-                                            <td>{product.name}</td>
-                                            <td>{product.price}</td>
-                                            <td>
-                                                Qt : {!quantity[product.name] ? 1 : quantity[product.name]}
+                                            <td className={stocked(product.stocked)}>{product.name}</td>
+                                            <td className={stocked(product.stocked)}>{product.price}</td>
+                                            <td className={stocked(product.stocked)}>
+                                                Qt  {!quantity[product.name] ? 1 : quantity[product.name]}
                                             </td>
                                             <td>
                                                 <ShoppingCountArticles
@@ -147,8 +150,7 @@ function FilterableProductTable ({productsObject}) {
                                 </tbody>
                             )}
                     </table>
-                )}
-                {products.length <= 0 && 'pas de products...'}
+                )) || <InfoAlert color="black" children='pas de products...'/>}
             </div>
             <aside className='panierAside'>
                 {(cart.length > 0) &&

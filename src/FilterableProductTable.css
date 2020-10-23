@@ -1,39 +1,43 @@
-.danger{
-    color: red
-}
 .contentBoard{
     display: flex;
     justify-content: space-around;
 }
+
 header{
     background-color:#e67e22;
     height: 130px;
     display: flex;
     align-items: center;
 }
+
 .imgLogo{
     width: 100px;
 }
+
 table{
     box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
 }
+
 .contentTable{
     display:flex;
     margin: 7% 4% 6% 4%;
-    flex-wrap: wrap;
     flex-direction: column;
     width: 75%;
-}
-
-.tableCategorie{
-    background: #fff;
-    padding: 10px;
-    margin: 10px;
 }
 
 .flexContentTable{
     display: flex;
     justify-content: space-around;
+}
+
+.tableCategorie{
+    background: #fff;
+    padding: 10px;
+    margin: 15px;
+}
+
+.tableCategorie tbody tr td{
+    width: 250px;
 }
 
 .quantityFlex{
@@ -49,10 +53,22 @@ table{
     margin-left: 10px;
 }
 
-.tableCategorie thead tr th{
-    text-align: center;
-}
 .panierAside{
     width: 25%;
     margin: 7% 0 7% 0;
+}
+svg{
+    padding: 2px;
+}
+.stocked{
+    color:red;
+}
+@media screen and (max-width: 640px) {
+    .contentTable{
+        margin: 0;
+    }
+    .panierAside{
+        width: 28%;
+        margin: 0;
+    }
 }

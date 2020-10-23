@@ -1,6 +1,9 @@
 .flexRecherche{
-    display:flex;
     margin-left: auto;
+    padding-right: 5%;
+}
+.flexRecherche :first-child{
+    padding: 3%;
 }
 .flexRecherche :first-child{
     border-radius: 50px;
