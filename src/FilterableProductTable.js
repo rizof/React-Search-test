@@ -41,7 +41,7 @@ function FilterableProductTable ({productsObject}) {
     }
 
     const calculator = function (prod) {
-        return prod.realPrice = parseFloat((prod.price.substr(1))) * prod.quantity
+        return prod.realPrice = (parseFloat((prod.price.substr(1))) * prod.quantity).toFixed(2)
     }
 
     const updateQuantityCart = function (prod, sym) {
@@ -109,6 +109,7 @@ function FilterableProductTable ({productsObject}) {
     return (<>
         {console.log("render")}
         <header>
+            <img className="imgLogo"src="https://stock.flashmode.tn/wp-content/uploads/2020/06/dj-music-logo-png-810.png" alt='logo'/>
             <SearchBar
                 filterText={filterText}
                 onFilterTextChange={handleFilterChange}
@@ -116,42 +117,46 @@ function FilterableProductTable ({productsObject}) {
                 onStockChange={handleFilterChange}
             />
         </header>
-        <div className='content'>
-            {categories.map((category, index) =>
-                <table key={index}>
-                    <thead>
-                        <tr>
-                            <th>{category}</th>
-                        </tr>
-                    </thead>
-                        {products.filter(product => product.category === category).map((product, index) =>
-                            <tbody key={index}>
-                                    <tr>
-                                        <td>{product.name}</td>
-                                        <td>{product.price}</td>
-                                        <td>
-                                            Qt : {!quantity[product.name] ? 1 : quantity[product.name]}
-                                        </td>
-                                        <td>
-                                            <ShoppingCountArticles
-                                                product={product}
-                                                updateQuantity={updateQuantity}
-                                                handleShoppingCart={handleShoppingCart}
-                                                delOrAdd={true}
-                                            />
-                                        </td>
-                                    </tr>
-                            </tbody>
-                        )}
-                </table>
-            )}
-            <ShoppingCart
-                cart={cart}
-                handleRemoveCart={handleRemoveCart}
-                updateQuantity={updateQuantity}
-                quantity={quantity}
-                updateQuantityCart={updateQuantityCart}
-            />
+        <div className='contentBoard'>
+            <div className='contentTable'>
+                {categories.map((category, index) =>
+                    <table className='tableCategorie' key={index}>
+                        <thead>
+                            <tr>
+                                <th>{category}</th>
+                            </tr>
+                        </thead>
+                            {products.filter(product => product.category === category).map((product, index) =>
+                                <tbody key={index}>
+                                        <tr>
+                                            <td>{product.name}</td>
+                                            <td>{product.price}</td>
+                                            <td>
+                                                Qt : {!quantity[product.name] ? 1 : quantity[product.name]}
+                                            </td>
+                                            <td>
+                                                <ShoppingCountArticles
+                                                    product={product}
+                                                    updateQuantity={updateQuantity}
+                                                    handleShoppingCart={handleShoppingCart}
+                                                    delOrAdd={true}
+                                                />
+                                            </td>
+                                        </tr>
+                                </tbody>
+                            )}
+                    </table>
+                )}
+            </div>
+            <aside>
+                <ShoppingCart
+                    cart={cart}
+                    handleRemoveCart={handleRemoveCart}
+                    updateQuantity={updateQuantity}
+                    quantity={quantity}
+                    updateQuantityCart={updateQuantityCart}
+                />
+            </aside>
         </div>
     </>)
 }

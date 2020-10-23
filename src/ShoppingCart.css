@@ -1,0 +1,23 @@
+.ShoppingCart{
+    background-color: #ecf0f1;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+    margin: 15px 15px 0 0;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.ShoppingCart div ul li{
+    text-align: center;
+    list-style-type: none;
+    display: block;
+}
+.ShoppingCart div ul{
+    padding: 0px;
+}
+.line{
+    border: 1px grey solid;
+}
+#total{
+    padding: 10px;
+}

@@ -1,0 +1,7 @@
+.flexRecherche{
+    display:flex;
+    margin-left: auto;
+}
+.flexRecherche :first-child{
+    border-radius: 50px;
+}
